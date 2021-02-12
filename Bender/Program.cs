@@ -50,6 +50,7 @@ public class Game
 
     private bool IsBeerMaster = false;
     private bool IsGame = true;
+    private bool Prioriters = false;
     public Game(char[,] world, (int, int) BenderPos, (int, int) size)
     {
         position = BenderPos;
@@ -79,6 +80,7 @@ public class Game
         {
             UpdateBenderLogic();
             DrawMaze();
+            Console.WriteLine(currentDirection);
             System.Threading.Thread.Sleep(1000);
         }
     }
@@ -117,7 +119,7 @@ public class Game
             }
             Move(position);
             if (cell == 'B')
-                IsBeerMaster = true;
+                IsBeerMaster = !IsBeerMaster;
             if (cell == 'E')
                 currentDirection = directions.EAST;
 
@@ -129,6 +131,9 @@ public class Game
 
             if (cell == 'S')
                 currentDirection = directions.SOUTH;
+
+            if (cell == 'I')
+                Inverse();
 
             if (cell == 'T')
             {
@@ -144,6 +149,10 @@ public class Game
         }
         else
             Move(position);
+    }
+    private void Inverse()
+    {
+        Prioriters = !Prioriters;
     }
     private void Teleport((int, int) pos)
     {
@@ -173,6 +182,14 @@ public class Game
     }
     private void ChangeDirection()
     {
+        if (!Prioriters)
+            CasualChange();
+        else
+            ReverseChange();
+        SetDirection();
+    }
+    private void CasualChange()
+    {
         switch (currentDirection)
         {
             case directions.SOUTH:
@@ -188,7 +205,24 @@ public class Game
                 currentDirection = directions.SOUTH;
                 break;
         }
-        SetDirection();
+    }
+    private void ReverseChange()
+    {
+        switch (currentDirection)
+        {
+            case directions.SOUTH:
+                currentDirection = directions.WEST;
+                break;
+            case directions.NORTH:
+                currentDirection = directions.EAST;
+                break;
+            case directions.EAST:
+                currentDirection = directions.SOUTH;
+                break;
+            case directions.WEST:
+                currentDirection = directions.NORTH;
+                break;
+        }
     }
     private void Move((int, int) position)
     {
