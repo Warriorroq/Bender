@@ -47,6 +47,7 @@ public class Game
     private directions currentDirection = directions.SOUTH;
     private (int, int) size = (0, 0);
     private ((int, int), (int, int)) teleports = ((0, 0), (0, 0));
+    private int loops = 0;
 
     private bool IsBeerMaster = false;
     private bool IsGame = true;
@@ -79,9 +80,13 @@ public class Game
         while (IsGame)
         {
             UpdateBenderLogic();
-            DrawMaze();
-            Console.WriteLine(currentDirection);
-            System.Threading.Thread.Sleep(1000);
+            if(loops > 1)
+            {
+                IsGame = false;
+                Console.WriteLine("LOOP");
+            }
+            //DrawMaze();
+            //System.Threading.Thread.Sleep(1000);
         }
     }
     private void DrawMaze()
@@ -95,7 +100,7 @@ public class Game
                 else if((i, j) == teleports.Item1 || (i, j) == teleports.Item2) 
                     Console.Write("T");
                 else 
-                    Console.Write(world[i, j]);
+                    Console.Write(renderWorld[i, j]);
             }
             Console.WriteLine();
         }
@@ -103,10 +108,29 @@ public class Game
     private void UpdateBenderLogic()
     {
         (int, int) position2 = (position.Item1 + direction.Item1, position.Item2 + direction.Item2);
+        if (renderWorld[position2.Item1, position2.Item2] == '-')
+        {
+            loops++;
+            ReZeroWay();
+        }
+        if (loops > 1)
+            return;
+
         if (world[position2.Item1, position2.Item2] != '#')
             CheckOnEffect(position2, world[position2.Item1, position2.Item2]);
         else
             ChangeDirection();
+    }
+    private void ReZeroWay()
+    {
+        for (int i = 0; i < size.Item1; i++)
+        {
+            for (int j = 0; j < size.Item2; j++)
+            {
+                if (renderWorld[i, j] == '-')
+                    renderWorld[i, j] = ' ';
+            }
+        }
     }
     private void CheckOnEffect((int, int) position, char cell)
     {
@@ -122,7 +146,6 @@ public class Game
                 IsBeerMaster = !IsBeerMaster;
             if (cell == 'E')
                 currentDirection = directions.EAST;
-
             if (cell == 'W')
                 currentDirection = directions.WEST;
 
@@ -229,5 +252,6 @@ public class Game
         if (IsGame)
             Console.WriteLine(currentDirection);
         this.position = position;
+        renderWorld[position.Item1, position.Item2] = '-';
     }
 }
