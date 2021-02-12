@@ -78,10 +78,8 @@ public class Game
         while (IsGame)
         {
             UpdateBenderLogic();
-            //if (IsGame)
-                //Console.WriteLine(currentDirection);
-            //DrawMaze();
-            //System.Threading.Thread.Sleep(1000);
+            DrawMaze();
+            System.Threading.Thread.Sleep(1000);
         }
     }
     private void DrawMaze()
@@ -117,9 +115,7 @@ public class Game
                 ChangeDirection();
                 return;
             }
-            this.position = position;
-            if(IsGame)
-                Console.WriteLine(currentDirection);
+            Move(position);
             if (cell == 'B')
                 IsBeerMaster = true;
             if (cell == 'E')
@@ -147,7 +143,7 @@ public class Game
             SetDirection();
         }
         else
-            this.position = position;
+            Move(position);
     }
     private void Teleport((int, int) pos)
     {
@@ -194,8 +190,10 @@ public class Game
         }
         SetDirection();
     }
-    private void Move()
+    private void Move((int, int) position)
     {
-
+        if (IsGame)
+            Console.WriteLine(currentDirection);
+        this.position = position;
     }
 }
