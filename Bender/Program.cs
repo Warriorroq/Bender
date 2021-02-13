@@ -85,8 +85,8 @@ public class Game
                 IsGame = false;
                 Console.WriteLine("LOOP");
             }
-            //DrawMaze();
-            //System.Threading.Thread.Sleep(1000);
+            DrawMaze();
+            System.Threading.Thread.Sleep(1000);
         }
     }
     private void DrawMaze()
@@ -123,14 +123,8 @@ public class Game
     }
     private void ReZeroWay()
     {
-        for (int i = 0; i < size.Item1; i++)
-        {
-            for (int j = 0; j < size.Item2; j++)
-            {
-                if (renderWorld[i, j] == '-')
-                    renderWorld[i, j] = ' ';
-            }
-        }
+        renderWorld = (char[,])world.Clone();
+        renderWorld[position.Item1, position.Item2] = ' ';
     }
     private void CheckOnEffect((int, int) position, char cell)
     {
@@ -141,6 +135,8 @@ public class Game
                 ChangeDirection();
                 return;
             }
+            else if (cell == 'X' && IsBeerMaster)
+                world[position.Item1, position.Item2] = ' ';
             Move(position);
             if (cell == 'B')
                 IsBeerMaster = !IsBeerMaster;
