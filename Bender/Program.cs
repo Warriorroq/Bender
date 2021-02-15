@@ -45,9 +45,9 @@ public class Game
         WEST
     }
     private directions currentDirection = directions.SOUTH;
+    private List<directions> diretionsList = new List<directions>();
     private (int, int) size = (0, 0);
     private ((int, int), (int, int)) teleports = ((0, 0), (0, 0));
-    private int loops = 0;
 
     private bool IsBeerMaster = false;
     private bool IsGame = true;
@@ -80,14 +80,11 @@ public class Game
         while (IsGame)
         {
             UpdateBenderLogic();
-            if(loops > 1)
-            {
-                IsGame = false;
-                Console.WriteLine("LOOP");
-            }
-            DrawMaze();
-            System.Threading.Thread.Sleep(1000);
+            //DrawMaze();
+            //System.Threading.Thread.Sleep(1000);
         }
+        foreach (var direction in diretionsList)
+            Console.WriteLine(direction);
     }
     private void DrawMaze()
     {
@@ -110,11 +107,8 @@ public class Game
         (int, int) position2 = (position.Item1 + direction.Item1, position.Item2 + direction.Item2);
         if (renderWorld[position2.Item1, position2.Item2] == '-')
         {
-            loops++;
             ReZeroWay();
         }
-        if (loops > 1)
-            return;
 
         if (world[position2.Item1, position2.Item2] != '#')
             CheckOnEffect(position2, world[position2.Item1, position2.Item2]);
@@ -162,6 +156,7 @@ public class Game
             if (cell == '$')
             {
                 IsGame = false;
+                diretionsList.Add(directions.SOUTH);
                 return;
             }
             SetDirection();
@@ -246,7 +241,7 @@ public class Game
     private void Move((int, int) position)
     {
         if (IsGame)
-            Console.WriteLine(currentDirection);
+            diretionsList.Add(currentDirection);
         this.position = position;
         renderWorld[position.Item1, position.Item2] = '-';
     }
